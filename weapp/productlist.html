@@ -1,0 +1,184 @@
+<html>
+<head>
+    <title>商品列表</title>
+    <meta charset="utf-8">
+    <link rel="stylesheet" type="text/css" href="css/frontindex.css">
+    <script type="text/javascript" src="js/jquery-3.3.1.min.js"></script>
+
+</head>
+<body>
+<input type="hidden" id="currentPage" value="1">
+<input type="hidden" id="totalPage" value="">    
+<!-- 左侧类别 -->
+<div class="productcategory">
+    <!-- 格式 -->
+ <!-- <div class="category">女装男装</div>
+    <div>
+        <span>潮流女装</span>
+        <span>初冬羽绒 </span>
+        <span>潮流女装</span>
+        <span>初冬羽绒 </span>
+        <span>潮流女装</span>
+        <span>初冬羽绒 </span>
+        <span>潮流女装</span>
+        <span>初冬羽绒 </span>
+    </div> -->
+   
+</div>
+<div class="productlist">
+    <!-- 格式 -->
+  <!--   <div class="products">
+        <div class="product">
+            <img src="images/upload/cs10001.jpg">
+            <div class="productName">韩版连帽加厚毛衣女外套</div>
+            <div class="productPrice">商城价：Y228.0</div>
+        </div> -->
+          
+    </div>
+   
+    <!-- ＜ -->
+   <!--  <div class="page">
+        <span id="previousPage"></span> 
+        <span id="firstPage">1</span>
+        <span id="sl1"></span>
+        <span id="num1"></span>
+        <span id="num2"></span>
+        <span id="num3"></span>
+        <span id="num4"></span>
+        <span id="num5"></span>
+        <span id="sl2"></span>
+        <span id="lastPage"></span>
+        <span id="nextPage">＞</span>
+    </div> -->
+</div>
+<script type="text/javascript" src="js/jquery-3.3.1.min.js"></script>
+<script type="text/javascript">
+    $(function () {
+      
+         var currentnum=1;
+             $.ajax({
+                    type:"GET",//请求方式:GET
+                    url: "CategorysecondServlet",//请求url
+                    dataType:"json",//数据类型：jsonp
+                    jsonpCallback: "success_jsonpCallback",
+                    success:function(data){
+                            var $productcategory =  $(".productcategory");
+                            var cid = "";
+                            $(data).each(function(){
+                            console.log(data);
+                            if(this.cid!=cid){
+                                cid = this.cid;
+                                var $category = $("<div class='category'>"+this.cname+"</div>");
+                                $category.appendTo($productcategory);
+                               $div = $("<div></div>");
+                                $div.appendTo($productcategory);
+                                
+                            }
+                            //不可以写到if里，因为cid的原因
+                            $div.append("<span>"+this.csname+"</span>");
+                        })
+                    }
+             })
+
+
+             //  $.ajax({
+             //        type:"GET",//请求方式:GET
+             //        url: "http://47.100.205.249/jqueryProject/ProductList",//请求url
+             //        dataType:"jsonp",//数据类型：jsonp
+             //        jsonp: "jsonpCallback",
+             //        jsonpCallback: "success_jsonpCallback1",
+             //        success:function(data){
+             //            var $productlist =  $(".productlist");
+             //         $div=$("<div class='products'></div>");
+             //            console.log(data);
+             //            $(data).each(function(){
+             //                $div2=$("<div class='product'></div>");
+             //                $img=$('<img src="images/upload/'+this.image+'">');
+             //                $productName=$("<div class='productName'>"+this.pname+"</div>");
+             //                $productPrice=$("<div class='productPrice'>商城价"+this.pid+"</div>");
+             //                $productlist.append($div);
+             //                $div.append($div2);
+             //                $div2.append($img);
+             //                $div2.append($productName);
+             //                $div2.append($productPrice);
+
+             //            })
+                   
+
+             //        }
+             // })
+
+           fenye(currentnum); 
+                $(".productlist").on("click", "span", function() {
+
+                    if($(this).text() == "＜") {
+                        if(currentnum > 1) {
+                            currentnum--;
+                            fenye(currentnum);
+                        }
+                    } else if($(this).text() == "＞") {
+                        if(currentnum < 8) {
+                            currentnum++;
+                            fenye(currentnum);
+                        }
+                    } else {
+                        currentnum = $(this).text();
+                        fenye($(this).text());
+                    }
+
+                })
+
+             
+                            })
+                          
+           
+        function fenye(num) {
+                $.ajax({
+                    type: "GET",
+                    url: "ProductListServlet",
+                    dataType: "json",
+                    //async: false,
+                    jsonpCallback: "success_jsonpCallback1",
+                    success: function(data) {
+                        $(".productlist").empty();
+                        var $productlist = $(".productlist");
+                        var $products = $("<div class='products'></div>");
+                        //console.log(data);
+                        var i = 0;
+                        $(data).each(function() {
+                            if(i > parseInt(num - 1 + "0") && i <= parseInt(num + "0")) {
+                                var $product = $("<div class='product'></div>");
+                                $product.append(`<img src=images/upload/${this.image}>`);
+                                $product.append(`<div class=productName>${this.pname}</div>`);
+                                $product.append(`<div class="productPrice">商城价：Y${this.marketprice}</div>`);
+                                $products.append($product);
+                                $productlist.append($products);
+                            }
+                            i++;
+                        });
+                        var $page = $('<div class="page"></div>');
+                        $page.append(`<span id="prevPage">＜</span>`);
+                       
+                        for(var i = 1; i <= parseInt(data.length / 10) + 1; i++) { //判断当前数据需要的页数
+                            $page.append(`<span class="num">${i}</span>`);
+                        }
+                        $page.append(`<span id="nextPage">＞</span>`);
+                        $productlist.append($page);
+                        //console.log($(".productlist>div.page>span"));
+                        $(".productlist>div.page>span").each(function() {
+                            //console.log($(this).html());
+                            if($(this).html() == num) {
+                                // console.log(this)
+                                $(this).css("background-color", "#F4F621");
+                            }
+                        });
+                       
+                    }
+                })
+            }
+            
+    
+</script>
+
+</body>
+</html>
