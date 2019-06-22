@@ -1,0 +1,2 @@
+setCssToHead([".",[1],"content { margin-top: ",[0,50],"; text-align: center; height: ",[0,400],"; }\n.",[1],"title { font-size: ",[0,36],"; }\n.",[1],"a{ display: -webkit-box; display: -webkit-flex; display: -ms-flexbox; display: flex; margin-top: ",[0,-10],"; width: 100%; height: ",[0,500],"; background: #F4F4F4; -webkit-box-pack: center; -webkit-justify-content: center; -ms-flex-pack: center; justify-content: center; }\n",],undefined,{path:"./page.wxss"})();
+document.dispatchEvent(new CustomEvent("generateFuncReady", { detail: { generateFunc: $gwx('./page.wxml') } }));
